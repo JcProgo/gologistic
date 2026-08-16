@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --ink: #f7f7f8;
+  --card: #ffffff;
+  --elevated: #ffffff;
+  --border: #e7e7ea;
+  --muted: #6b6b75;
+  --text: #121218;
+
+  --accent: #ea580c;
+  --confirmada: #0d9488;
+  --cancelada: #dc2626;
+  --sin-confirmar: #d97706;
+  --pendiente: #8b5cf6;
+  --gold: #b8860b;
+}
+
+.dark {
+  color-scheme: dark;
+  --ink: #0b0b0e;
+  --card: #17171c;
+  --elevated: #1e1e25;
+  --border: #2a2a33;
+  --muted: #9a9aa5;
+  --text: #f4f4f6;
+
+  --accent: #3b82f6;
+  --confirmada: #0d9488;
+  --cancelada: #ef4444;
+  --sin-confirmar: #d97706;
+  --pendiente: #8b5cf6;
+  --gold: #d4af37;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-(--border) bg-(--elevated) px-3 py-2.5 text-sm text-(--text) outline-none;
+  }
+  .input:focus {
+    @apply border-(--accent);
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
