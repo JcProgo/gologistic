@@ -20,7 +20,7 @@ export default function Login() {
       if (signInError.code === 'email_not_confirmed') {
         setError('Tu correo no está confirmado todavía. Pídele al administrador que confirme tu cuenta desde Supabase.')
       } else {
-        setError('Correo o contraseña incorrectos.')
+        setError(`Correo o contraseña incorrectos. (${signInError.code ?? signInError.status ?? 'sin código'}: ${signInError.message})`)
       }
     }
     setLoading(false)
