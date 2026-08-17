@@ -98,7 +98,16 @@ function InviteModal({ onClose, onInvited }) {
     setLoading(false)
 
     if (invokeError || data?.error) {
-      setError(data?.error || 'No se pudo enviar la invitación.')
+      let message = data?.error || invokeError?.message || 'No se pudo enviar la invitación.'
+      if (invokeError?.context?.json) {
+        try {
+          const body = await invokeError.context.json()
+          if (body?.error) message = body.error
+        } catch {
+          // el cuerpo de la respuesta no era JSON, nos quedamos con el mensaje que ya teníamos
+        }
+      }
+      setError(message)
       return
     }
 
