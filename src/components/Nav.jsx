@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  LayoutDashboard,
+  ChartColumn,
   Package,
   Clock,
   CheckCircle2,
@@ -18,7 +18,7 @@ import { supabase } from '../lib/supabaseClient'
 import Logo from './Logo'
 
 const PRIMARY = [
-  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { key: 'dashboard', label: 'Dashboard', icon: ChartColumn },
   { key: 'pedidos', label: 'Pedidos', icon: Package },
   { key: 'devoluciones', label: 'Devoluciones', icon: RotateCcw },
 ]

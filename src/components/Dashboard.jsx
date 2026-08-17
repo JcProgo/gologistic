@@ -39,8 +39,8 @@ export default function Dashboard({ orders, devoluciones, setView }) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 md:px-8 md:py-8">
-      <h1 className="font-(family-name:--font-display) text-2xl font-semibold text-(--text)">Dashboard</h1>
-      <p className="mt-1 text-sm text-(--muted)">Vista general de pedidos{total ? ` — ${total} en este período` : ''}.</p>
+      <h1 className="font-(family-name:--font-display) text-2xl font-semibold text-(--text)">Vista general</h1>
+      <p className="mt-1 text-sm text-(--muted)">Pedidos{total ? ` — ${total} en este período` : ''}.</p>
 
       <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
         {RANGES.map((r) => (
