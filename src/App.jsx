@@ -126,6 +126,7 @@ export default function App() {
     if (!session) return <FullscreenSpinner />
     return (
       <SetPassword
+        mode={mode}
         onDone={() => {
           window.history.replaceState(null, '', window.location.pathname)
           setPendingAuthFlow(false)
@@ -134,7 +135,7 @@ export default function App() {
     )
   }
 
-  if (!session) return <Login />
+  if (!session) return <Login mode={mode} />
   if (profileLoading || !profile) return <FullscreenSpinner />
 
   return (

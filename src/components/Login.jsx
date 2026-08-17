@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Package, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
+import Logo from './Logo'
 
-export default function Login() {
+export default function Login({ mode }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -29,13 +30,8 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-(--ink) px-4">
       <div className="w-full max-w-sm rounded-2xl border border-(--border) bg-(--card) p-8 shadow-xl shadow-black/5">
-        <div className="mb-6 flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)">
-            <Package size={18} strokeWidth={2.5} />
-          </div>
-          <span className="font-(family-name:--font-display) text-lg font-semibold text-(--text)">
-            Go Logistic
-          </span>
+        <div className="mb-6">
+          <Logo mode={mode} size="lg" />
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

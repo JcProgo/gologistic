@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
+import Logo from './Logo'
 
 const PRIMARY = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,13 +45,8 @@ export default function Nav({ view, setView, profile, mode, setMode }) {
     <>
       {/* Sidebar — escritorio */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-(--border) bg-(--card) p-4 md:flex">
-        <div className="mb-8 flex items-center gap-2.5 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--accent)/15 text-(--accent)">
-            <Package size={16} strokeWidth={2.5} />
-          </div>
-          <span className="font-(family-name:--font-display) font-semibold text-(--text)">
-            Go Logistic
-          </span>
+        <div className="mb-8 px-2">
+          <Logo mode={mode} size="md" />
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">
@@ -91,7 +87,7 @@ export default function Nav({ view, setView, profile, mode, setMode }) {
 
       {/* Barra superior — móvil */}
       <div className="flex items-center justify-between border-b border-(--border) bg-(--card) px-4 py-3 md:hidden">
-        <span className="font-(family-name:--font-display) font-semibold text-(--text)">Go Logistic</span>
+        <Logo mode={mode} size="sm" />
         <div className="flex items-center gap-1">
           <button
             onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
