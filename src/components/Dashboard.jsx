@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Package, Clock, CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
-import { RANGES, withinRange } from '../lib/dateRange'
+import RangePicker from './RangePicker'
+import { withinRange } from '../lib/dateRange'
 import { ORDER_STATUS, RETURN_STATUS } from '../lib/statusMeta'
 
 const ORDER_ROWS = [
@@ -12,10 +13,11 @@ const ORDER_ROWS = [
 
 export default function Dashboard({ orders, devoluciones, setView }) {
   const [range, setRange] = useState('today')
+  const [customRange, setCustomRange] = useState({ start: '', end: '' })
 
   const scoped = useMemo(
-    () => orders.filter((o) => withinRange(o.shopify_created_at ?? o.created_at, range)),
-    [orders, range],
+    () => orders.filter((o) => withinRange(o.shopify_created_at ?? o.created_at, range, customRange)),
+    [orders, range, customRange],
   )
 
   const counts = useMemo(() => {
@@ -42,18 +44,8 @@ export default function Dashboard({ orders, devoluciones, setView }) {
       <h1 className="font-(family-name:--font-display) text-2xl font-semibold text-(--text)">Vista general</h1>
       <p className="mt-1 text-sm text-(--muted)">Pedidos{total ? ` — ${total} en este período` : ''}.</p>
 
-      <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
-        {RANGES.map((r) => (
-          <button
-            key={r.key}
-            onClick={() => setRange(r.key)}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              range === r.key ? 'bg-(--accent) text-white' : 'bg-(--elevated) text-(--muted)'
-            }`}
-          >
-            {r.label}
-          </button>
-        ))}
+      <div className="mt-5">
+        <RangePicker range={range} setRange={setRange} customRange={customRange} setCustomRange={setCustomRange} />
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">

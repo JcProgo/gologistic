@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Search, ChevronDown } from 'lucide-react'
 import StatusBadge from './StatusBadge'
+import RangePicker from './RangePicker'
 import { ORDER_STATUS } from '../lib/statusMeta'
 import { formatCOP, formatDateTime } from '../lib/formatters'
-import { RANGES, withinRange } from '../lib/dateRange'
+import { withinRange } from '../lib/dateRange'
 
 export default function OrdersBoard({ title, subtitle, orders, statuses, actions = [], patchOrder, profile, defaultRange = 'today' }) {
   const [range, setRange] = useState(defaultRange)
+  const [customRange, setCustomRange] = useState({ start: '', end: '' })
   const [search, setSearch] = useState('')
   const [expandedId, setExpandedId] = useState(null)
 
@@ -14,7 +16,7 @@ export default function OrdersBoard({ title, subtitle, orders, statuses, actions
     const q = search.trim().toLowerCase()
     return orders
       .filter((o) => statuses.includes(o.status))
-      .filter((o) => withinRange(o.shopify_created_at ?? o.created_at, range))
+      .filter((o) => withinRange(o.shopify_created_at ?? o.created_at, range, customRange))
       .filter(
         (o) =>
           !q ||
@@ -23,7 +25,7 @@ export default function OrdersBoard({ title, subtitle, orders, statuses, actions
           o.phone?.toLowerCase().includes(q),
       )
       .sort((a, b) => new Date(b.shopify_created_at ?? b.created_at) - new Date(a.shopify_created_at ?? a.created_at))
-  }, [orders, statuses, range, search])
+  }, [orders, statuses, range, customRange, search])
 
   function applyAction(order, action, notes) {
     patchOrder(order.id, {
@@ -39,18 +41,8 @@ export default function OrdersBoard({ title, subtitle, orders, statuses, actions
       <h1 className="font-(family-name:--font-display) text-2xl font-semibold text-(--text)">{title}</h1>
       <p className="mt-1 text-sm text-(--muted)">{subtitle}</p>
 
-      <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
-        {RANGES.map((r) => (
-          <button
-            key={r.key}
-            onClick={() => setRange(r.key)}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              range === r.key ? 'bg-(--accent) text-white' : 'bg-(--elevated) text-(--muted)'
-            }`}
-          >
-            {r.label}
-          </button>
-        ))}
+      <div className="mt-5">
+        <RangePicker range={range} setRange={setRange} customRange={customRange} setCustomRange={setCustomRange} />
       </div>
 
       <div className="relative mt-4">
