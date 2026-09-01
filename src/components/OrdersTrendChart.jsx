@@ -1,79 +1,20 @@
 import { useMemo, useRef, useState } from 'react'
 
-function localDateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-function dayLabel(date) {
-  return new Intl.DateTimeFormat('es-CO', { day: '2-digit', month: 'short' }).format(date)
-}
-
 function hourLabel(hour) {
   const d = new Date()
   d.setHours(hour, 0, 0, 0)
   return new Intl.DateTimeFormat('es-CO', { hour: 'numeric' }).format(d)
 }
 
-function clampSpan(start, end, maxSpanDays = 90) {
-  const spanDays = Math.round((end - start) / 86400000)
-  if (spanDays > maxSpanDays) {
-    const clampedStart = new Date(end)
-    clampedStart.setDate(clampedStart.getDate() - maxSpanDays)
-    return { start: clampedStart, end }
-  }
-  return { start, end }
-}
-
-function getDayBounds(range, customRange, orders) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  if (range === '7d') {
-    const start = new Date(today)
-    start.setDate(start.getDate() - 6)
-    return { start, end: today }
-  }
-  if (range === '30d') {
-    const start = new Date(today)
-    start.setDate(start.getDate() - 29)
-    return { start, end: today }
-  }
-  if (range === 'custom' && customRange?.start) {
-    const start = new Date(`${customRange.start}T00:00:00`)
-    const end = customRange.end ? new Date(`${customRange.end}T00:00:00`) : today
-    return clampSpan(start, end)
-  }
-  // 'all', o 'custom' sin fecha de inicio: desde el pedido más antiguo (máx. 90 días)
-  if (orders.length === 0) return { start: today, end: today }
-  const minDate = new Date(Math.min(...orders.map((o) => new Date(o.shopify_created_at ?? o.created_at))))
-  minDate.setHours(0, 0, 0, 0)
-  return clampSpan(minDate, today)
-}
-
-function buildBuckets(orders, range, customRange) {
-  if (range === 'today') {
-    const buckets = Array.from({ length: 24 }, (_, h) => ({ key: h, label: hourLabel(h), value: 0 }))
-    orders.forEach((o) => {
-      const d = new Date(o.shopify_created_at ?? o.created_at)
-      buckets[d.getHours()].value += 1
-    })
-    return buckets
-  }
-
-  const { start, end } = getDayBounds(range, customRange, orders)
-  const map = new Map()
+function buildHourlyBuckets(orders) {
+  const now = new Date()
+  const buckets = Array.from({ length: 24 }, (_, h) => ({ key: h, label: hourLabel(h), value: 0 }))
   orders.forEach((o) => {
-    const key = localDateKey(new Date(o.shopify_created_at ?? o.created_at))
-    map.set(key, (map.get(key) ?? 0) + 1)
+    const d = new Date(o.shopify_created_at ?? o.created_at)
+    if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()) {
+      buckets[d.getHours()].value += 1
+    }
   })
-
-  const buckets = []
-  const cur = new Date(start)
-  while (cur <= end) {
-    const key = localDateKey(cur)
-    buckets.push({ key, label: dayLabel(cur), value: map.get(key) ?? 0 })
-    cur.setDate(cur.getDate() + 1)
-  }
   return buckets
 }
 
@@ -97,8 +38,8 @@ const PAD_TOP = 16
 const PAD_BOTTOM = 8
 const PAD_X = 6
 
-export default function OrdersTrendChart({ orders, range, customRange }) {
-  const buckets = useMemo(() => buildBuckets(orders, range, customRange), [orders, range, customRange])
+export default function OrdersTrendChart({ orders }) {
+  const buckets = useMemo(() => buildHourlyBuckets(orders), [orders])
   const [hoverIndex, setHoverIndex] = useState(null)
   const svgRef = useRef(null)
 
@@ -108,7 +49,7 @@ export default function OrdersTrendChart({ orders, range, customRange }) {
 
   const points = buckets.map((b, i) => ({
     ...b,
-    x: PAD_X + (buckets.length > 1 ? (i / (buckets.length - 1)) * innerW : innerW / 2),
+    x: PAD_X + (i / (buckets.length - 1)) * innerW,
     y: PAD_TOP + innerH - (b.value / max) * innerH,
   }))
 
@@ -140,7 +81,7 @@ export default function OrdersTrendChart({ orders, range, customRange }) {
     <div className="mt-6 rounded-xl border border-(--border) bg-(--card) p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-(--text)">Pedidos en el tiempo</h2>
+          <h2 className="text-sm font-semibold text-(--text)">Pedidos hoy en tiempo real</h2>
           <p className="mt-1 font-(family-name:--font-mono) text-2xl font-semibold text-(--text)">{total}</p>
         </div>
         {active && (

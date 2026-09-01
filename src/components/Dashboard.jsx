@@ -72,7 +72,7 @@ export default function Dashboard({ orders, devoluciones, setView }) {
         })}
       </div>
 
-      <OrdersTrendChart orders={scoped} range={range} customRange={customRange} />
+      <OrdersTrendChart orders={orders} />
 
       <div className="mt-6 rounded-xl border border-(--border) bg-(--card) p-4">
         <h2 className="mb-3 text-sm font-semibold text-(--text)">Pedidos por estado</h2>

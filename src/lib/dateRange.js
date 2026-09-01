@@ -1,10 +1,15 @@
 export const RANGES = [
   { key: 'today', label: 'Hoy' },
+  { key: 'yesterday', label: 'Ayer' },
   { key: '7d', label: '7 días' },
   { key: '30d', label: '30 días' },
   { key: 'all', label: 'Todo' },
   { key: 'custom', label: 'Personalizado' },
 ]
+
+function isSameLocalDay(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+}
 
 export function withinRange(iso, rangeKey, customRange) {
   if (!iso) return false
@@ -21,12 +26,11 @@ export function withinRange(iso, rangeKey, customRange) {
   }
 
   const now = new Date()
-  if (rangeKey === 'today') {
-    return (
-      date.getFullYear() === now.getFullYear() &&
-      date.getMonth() === now.getMonth() &&
-      date.getDate() === now.getDate()
-    )
+  if (rangeKey === 'today') return isSameLocalDay(date, now)
+  if (rangeKey === 'yesterday') {
+    const yesterday = new Date(now)
+    yesterday.setDate(yesterday.getDate() - 1)
+    return isSameLocalDay(date, yesterday)
   }
   const days = rangeKey === '7d' ? 7 : 30
   const cutoff = new Date(now)
