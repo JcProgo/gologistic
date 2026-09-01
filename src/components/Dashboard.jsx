@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Package, Clock, CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
 import RangePicker from './RangePicker'
+import OrdersTrendChart from './OrdersTrendChart'
 import { withinRange } from '../lib/dateRange'
 import { ORDER_STATUS, RETURN_STATUS } from '../lib/statusMeta'
 
@@ -70,6 +71,8 @@ export default function Dashboard({ orders, devoluciones, setView }) {
           )
         })}
       </div>
+
+      <OrdersTrendChart orders={scoped} range={range} customRange={customRange} />
 
       <div className="mt-6 rounded-xl border border-(--border) bg-(--card) p-4">
         <h2 className="mb-3 text-sm font-semibold text-(--text)">Pedidos por estado</h2>
